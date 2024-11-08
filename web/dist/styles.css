@@ -28,6 +28,10 @@ body {
 canvas {
 	user-select: none;
 	touch-action: none;
+	background: #242323;
+	/* width: 1000px; */
+	/* height: 1000px; */
+	image-rendering: pixelated;
 }
 
 input#in-game-input {
