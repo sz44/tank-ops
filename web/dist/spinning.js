@@ -1,9 +1,14 @@
-//canvas
 let canvas = document.querySelector("#game");
 let ctx = canvas.getContext("2d")
-// ctx.imageSmoothingEnabled = false;
-canvas.width = 2000;
-canvas.height = 2000;
+
+let rect = canvas.parentElement.getBoundingClientRect();
+
+canvas.width = rect.width * window.devicePixelRatio;
+canvas.height = rect.height * window.devicePixelRatio;
+canvas.style.width = `${rect.width}px`;
+canvas.style.height = `${rect.height}px`;
+
+ctx.imageSmoothingEnabled = false;
 
 // preload sprites
 let img = new Image();
@@ -51,7 +56,7 @@ img.addEventListener("load", () => {
   // ctx.drawImage(img, start.x, start.y, size0.x, size0.y, 300, 300, size0.x*2, size0.y*2);
 })
 
-let tankInd = 12 
+let tankInd = 6 
 let tanks = SPRITES_96.tanksBodies;
 
 let prevTime = Date.now();
@@ -66,7 +71,7 @@ function spin() {
   }
   ctx.clearRect(200,200, 2000,2000);
   let t = tanks[tankInd];
-  let scale = 3;
+  let scale = 4;
   let sizeX = t.size.x * scale;
   let sizeY = t.size.y * scale;
   ctx.drawImage(img, t.start.x+0.5, t.start.y+0.5, t.size.x-1, t.size.y-1, 400 + Math.floor(t.offset.x * scale), 400 + Math.floor(t.offset.y * scale), sizeX, sizeY);

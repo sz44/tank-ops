@@ -1,7 +1,6 @@
 const canvas = document.querySelector("#game");
 const ctx = canvas.getContext("2d");
 
-
 let scale = 5;
 
 const scaleUI = document.querySelector("#scale");
@@ -17,21 +16,24 @@ scaleUI.addEventListener("change", (e) => {
 
   resizeCanvas();
   show();
-})
+});
 
 function resizeCanvas() {
+  const rect = canvas.parentElement.getBoundingClientRect();
 
-const rect = canvas.parentElement.getBoundingClientRect();
+  const pixelRatio = window.devicePixelRatio;
 
-const pixelRatio = window.devicePixelRatio;
-
-const adjustedWidth = rect.width * pixelRatio;
-const adjustedHeight = rect.height * pixelRatio;
-  canvas.width = adjustedWidth / scale;
-  canvas.height = adjustedHeight / scale;
+  canvas.width = rect.width / scale;
+  canvas.height = rect.height / scale;
   
-  canvas.style.width = `${adjustedWidth}px`;
-  canvas.style.height = `${adjustedHeight}px`;
+  // account for pixle density
+  // const adjustedWidth = rect.width * pixelRatio;
+  // const adjustedHeight = rect.height * pixelRatio;
+  // canvas.width = adjustedWidth / scale;
+  // canvas.height = adjustedHeight / scale;
+
+  canvas.style.width = `${rect.width}px`;
+  canvas.style.height = `${rect.height}px`;
 }
 
 resizeCanvas()
