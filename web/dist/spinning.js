@@ -71,11 +71,9 @@ function spin() {
   }
   ctx.clearRect(200,200, 2000,2000);
   let t = tanks[tankInd];
-  let scale = 4;
+  let scale = 8;
   let sizeX = t.size.x * scale;
   let sizeY = t.size.y * scale;
   ctx.drawImage(img, t.start.x+0.5, t.start.y+0.5, t.size.x-1, t.size.y-1, 400 + Math.floor(t.offset.x * scale), 400 + Math.floor(t.offset.y * scale), sizeX, sizeY);
   tankInd = ++tankInd % 48;
 }
-
-

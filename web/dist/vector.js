@@ -7,4 +7,8 @@ export class Vector {
   add(other) {
     return new Vector(this.x+other.x, this.y+other.y);
   }
+
+  sub(other) {
+    return new Vector(this.x-other.x, this.y-other.y);
+  }
 }
