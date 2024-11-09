@@ -53,4 +53,6 @@ function show() {
 
 window.addEventListener("resize", () => {
   console.log("resised");
+  resizeCanvas();
+  show();
 });

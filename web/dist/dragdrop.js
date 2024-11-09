@@ -4,11 +4,12 @@ const canvas = document.querySelector("#game");
 const ctx = canvas.getContext("2d");
 
 const rect = canvas.parentElement.getBoundingClientRect();
-canvas.width = rect.width;
-canvas.height = rect.height;
+canvas.width = rect.width * devicePixelRatio;
+canvas.height = rect.height * devicePixelRatio;
+canvas.style.width = `${rect.width}px`;
+canvas.style.height = `${rect.height}px`;
 
-canvas.style.width = rect.width;
-canvas.style.height = rect.height;
+console.log(`ratio: ${window.devicePixelRatio}`)
 
 class Square {
   constructor(x,y,size, color) {
@@ -48,6 +49,9 @@ let selected = null;
 
 canvas.addEventListener("pointerdown", (e) => {
   let [mx, my] = [e.offsetX, e.offsetY];
+  console.log(`ratio: ${window.devicePixelRatio}`);
+  mx *= devicePixelRatio; 
+  my *= devicePixelRatio;
   clickVec = new Vector(mx, my);
   squares.forEach( sq => {
     if (mx >= sq.position.x && mx <= sq.position.x + sq.size && my >= sq.position.y && my <= sq.position.y + sq.size) {
@@ -65,9 +69,21 @@ canvas.addEventListener("pointerup", (e) => {
 
 canvas.addEventListener("pointermove", (e) => {
   let [mx, my] = [e.offsetX, e.offsetY];
-  // console.log(`mx ${mx} my ${my}`);
+  mx *= devicePixelRatio;
+  my *= devicePixelRatio;
+  console.log(`ratio: ${window.devicePixelRatio}`);
+  console.log(`mx ${mx} my ${my}`);
   if (selected) {
     let mouseVec = new Vector(mx, my);
     selected.position = mouseVec.sub(diffVec);
   }
+});
+
+window.addEventListener("resize", () => {
+  const rect = canvas.parentElement.getBoundingClientRect();
+  // need to also change canvas size when resizing... why?
+  canvas.width = rect.width * devicePixelRatio;
+  canvas.height = rect.height * devicePixelRatio;
+  canvas.style.width = `${rect.width}px`;
+  canvas.style.height = `${rect.height}px`;
 });
