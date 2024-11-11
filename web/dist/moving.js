@@ -11,21 +11,21 @@ canvas.height = rect.height;
 canvas.style.width = `${rect.width}px`;
 canvas.style.height = `${rect.height}px`;
 
-let points = [];
+// let points = [];
 
-let p1 = new Vector(200, 200);
-points.push(p1)
-let p2 = new Vector(600, 600);
-points.push(p2)
-let p3 = new Vector(800, 200);
-points.push(p3)
+// let p1 = new Vector(200, 200);
+// points.push(p1)
+// let p2 = new Vector(600, 600);
+// points.push(p2)
+// let p3 = new Vector(800, 200);
+// points.push(p3)
 
-drawLine(p1,p2);
-drawLine(p2,p3);
+// drawLine(p1,p2);
+// drawLine(p2,p3);
 
-points.forEach( p => {
-  drawPoint(p.x, p.y, 10, 'red');
-});
+// points.forEach( p => {
+//   drawPoint(p.x, p.y, 10, 'red');
+// });
 
 class Hex {
   constructor(x,y,r=80,c='rgb(23,54,108)') {
@@ -54,33 +54,86 @@ class Hex {
   }
 }
 
-let h1 = new Hex(550,300);
-h1.draw();
 
+let h1 = new Hex(550,400);
+// h1.draw();
+let w = getHexWidth(h1.r);
 let h = getHexHeight(h1.r);
-for (let a = 0; a<Math.PI*2; a+=Math.PI/3) {
-  let hx = new Hex(h1.center.x + h*Math.cos(a),h1.center.y + h*Math.sin(a));
-  hx.draw();
-}
 
-let topHex = h1.center.sub(new Vector(0, getHexHeight(h1.r)));
-let h2 = new Hex(topHex.x, topHex.y);
+// for (let a = 0; a<Math.PI*2; a+=Math.PI/3) {
+//   let hx = new Hex(h1.center.x + w*Math.cos(a),h1.center.y + w*Math.sin(a));
+//   hx.draw();
+// }
+
+// let farTopLeftVec = h1.center.sub(new Vector(1.5*w, 1.5*h));
+// let h5 = new Hex(farTopLeftVec.x, farTopLeftVec.y);
+// h5.draw();
+
+// let farTopRightVec = h1.center.add(new Vector(1.5*w, 1.5*h));
+// let h6 = new Hex(farTopRightVec.x, farTopRightVec.y);
+// h6.draw();
+
+// let topHex = h1.center.sub(new Vector(0, getHexHeight(h1.r)));
+// let h2 = new Hex(topHex.x, topHex.y);
 // h2.draw();
 
-let botHex = h1.center.add(new Vector(0, getHexHeight(h1.r)));
-let h3 = new Hex(botHex.x, botHex.y);
+// let botHex = h1.center.add(new Vector(0, getHexHeight(h1.r)));
+// let h3 = new Hex(botHex.x, botHex.y);
 // h3.draw();
 
-let topLeftHex = h1.center.sub(new Vector(h1.r + getHexWidth(h1.r) * 0.5, getHexHeight(h1.r) * 0.5));
-let h4 = new Hex(topLeftHex.x, topLeftHex.y)
+// let topLeftHex = h1.center.sub(new Vector(h1.r + getHexWidth(h1.r) * 0.5, getHexHeight(h1.r) * 0.5));
+// let h4 = new Hex(topLeftHex.x, topLeftHex.y)
 // h4.draw();
 
+const ROWS = 3;
+const COLS = 4
+let hexes = [];
+let startVec = new Vector(300, 300);
+for (let r = 0; r < ROWS; r++) {
+  for (let q = 0; q < COLS; q++) {
+    let offset = r%2 ? 0.5*w : 0;
+    let v = startVec.add(new Vector(offset+w*q, 1.5*h*r));
+    hexes.push(new Hex(v.x,v.y));
+  }
+}
+
+hexes.forEach( h => {
+  h.draw();
+});
+
+
+let path = [
+  getHexAt(0, 0).center,
+  getHexAt(0, 1).center,
+  getHexAt(1, 0).center,
+  getHexAt(2, 0).center,
+  getHexAt(3, 2).center,
+  getHexAt(2, 2).center,
+];
+
+ctx.strokeStyle = 'rgb(10,100,100)';
+ctx.lineWidth = 5;
+ctx.beginPath();
+for (let i=0; i<path.length; i++) {
+  let v = path[i];
+  if (i == 0) {
+    ctx.moveTo(v.x,v.y);
+  } else {
+    ctx.lineTo(v.x,v.y);
+  }
+}
+ctx.stroke();
+
+function getHexAt(q,r) {
+  return hexes[q + r * COLS];
+}
+
 function getHexHeight(r) {
-  return Math.round(2 * r * Math.cos(Math.PI/6));
+  return Math.round(2 * r * Math.sin(Math.PI/6));
 }
 
 function getHexWidth(r) {
-  return Math.round(2 * r * Math.sin(Math.PI/6));
+  return Math.round(2 * r * Math.cos(Math.PI/6));
 }
 
 function drawLine(a,b) {
@@ -90,10 +143,14 @@ function drawLine(a,b) {
   }
 }
 
+function drawPointVec(v,r=5,c='red') {
+  drawPoint(v.x,v.y,r,c);
+}
+
 function drawPoint(x,y,r,c) {
   ctx.fillStyle = c;
   ctx.beginPath();
-  ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.arc(x,y,r,0,Math.PI*2); 
   ctx.fill();
 }
 
