@@ -11,22 +11,6 @@ canvas.height = rect.height;
 canvas.style.width = `${rect.width}px`;
 canvas.style.height = `${rect.height}px`;
 
-// let points = [];
-
-// let p1 = new Vector(200, 200);
-// points.push(p1)
-// let p2 = new Vector(600, 600);
-// points.push(p2)
-// let p3 = new Vector(800, 200);
-// points.push(p3)
-
-// drawLine(p1,p2);
-// drawLine(p2,p3);
-
-// points.forEach( p => {
-//   drawPoint(p.x, p.y, 10, 'red');
-// });
-
 class Hex {
   constructor(x,y,r=80,c='rgb(23,54,108)') {
     this.center = new Vector(x,y);
@@ -54,36 +38,10 @@ class Hex {
   }
 }
 
-
 let h1 = new Hex(550,400);
 // h1.draw();
 let w = getHexWidth(h1.r);
 let h = getHexHeight(h1.r);
-
-// for (let a = 0; a<Math.PI*2; a+=Math.PI/3) {
-//   let hx = new Hex(h1.center.x + w*Math.cos(a),h1.center.y + w*Math.sin(a));
-//   hx.draw();
-// }
-
-// let farTopLeftVec = h1.center.sub(new Vector(1.5*w, 1.5*h));
-// let h5 = new Hex(farTopLeftVec.x, farTopLeftVec.y);
-// h5.draw();
-
-// let farTopRightVec = h1.center.add(new Vector(1.5*w, 1.5*h));
-// let h6 = new Hex(farTopRightVec.x, farTopRightVec.y);
-// h6.draw();
-
-// let topHex = h1.center.sub(new Vector(0, getHexHeight(h1.r)));
-// let h2 = new Hex(topHex.x, topHex.y);
-// h2.draw();
-
-// let botHex = h1.center.add(new Vector(0, getHexHeight(h1.r)));
-// let h3 = new Hex(botHex.x, botHex.y);
-// h3.draw();
-
-// let topLeftHex = h1.center.sub(new Vector(h1.r + getHexWidth(h1.r) * 0.5, getHexHeight(h1.r) * 0.5));
-// let h4 = new Hex(topLeftHex.x, topLeftHex.y)
-// h4.draw();
 
 const ROWS = 3;
 const COLS = 4
@@ -100,7 +58,6 @@ for (let r = 0; r < ROWS; r++) {
 hexes.forEach( h => {
   h.draw();
 });
-
 
 let path = [
   getHexAt(0, 0).center,
@@ -123,6 +80,50 @@ for (let i=0; i<path.length; i++) {
   }
 }
 ctx.stroke();
+
+let startPos = new Vector(200,100);
+let endPos = new Vector(800, 100);
+let tankPos = new Vector(200,100);
+drawPointVec(startPos);
+drawPointVec(endPos);
+
+const MAX_SPEED = 300;
+const dist = endPos.sub(startPos);
+const duration = (dist.x / MAX_SPEED) * 1000;
+console.log(duration);
+
+
+let startTime = 0;
+
+function animate(t) {
+  ctx.clearRect(0,0,canvas.width,200);
+  drawPointVec(startPos);
+  drawPointVec(endPos);
+  if (tankPos.x >= endPos.x) {
+    tankPos.x = endPos.x;
+    console.log("end");
+    return;
+  }
+  if (startTime === 0) {
+    startTime = t;
+  }
+  let elapsed = t - startTime;
+  let rawProgress = elapsed / duration;
+  let smoothProgress = getSmoothProgress(rawProgress);
+  tankPos.x = lerp(startPos.x, endPos.x, smoothProgress)
+  drawPointVec(tankPos)
+  requestAnimationFrame(animate);
+} 
+requestAnimationFrame(animate);
+
+function getSmoothProgress(x) {
+  // Clamp between 0 and 1
+  x = Math.max(0, Math.min(1, x));
+  // ease in out cubic
+  // return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  // ease in out quad
+  return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+}
 
 function getHexAt(q,r) {
   return hexes[q + r * COLS];
