@@ -90,9 +90,6 @@ drawPointVec(endPos);
 const MAX_SPEED = 300;
 const dist = endPos.sub(startPos);
 const duration = (dist.x / MAX_SPEED) * 1000;
-console.log(duration);
-
-
 let startTime = 0;
 
 function animate(t) {
@@ -110,11 +107,27 @@ function animate(t) {
   let elapsed = t - startTime;
   let rawProgress = elapsed / duration;
   let smoothProgress = getSmoothProgress(rawProgress);
-  tankPos.x = lerp(startPos.x, endPos.x, smoothProgress)
+  let aul = areaUnderLine(0,1,rawProgress);
+  tankPos.x = lerp(startPos.x, endPos.x, aul);
   drawPointVec(tankPos)
   requestAnimationFrame(animate);
 } 
 requestAnimationFrame(animate);
+
+function areaUnderLine(y1, y2, t) {
+  if (t <= 0) return 0;
+  const low = Math.min(y1, y2);
+  const diff = Math.abs(y1 - y2);
+
+  const rect = low * t;
+
+  if (t >= 1) return low + diff / 2;
+
+  if (y1 <= y2) {
+    return rect + (t * t * diff) / 2;
+  }
+  return rect + ((1 - (1 - t) * (1 - t)) * diff) / 2;
+}
 
 function getSmoothProgress(x) {
   // Clamp between 0 and 1
