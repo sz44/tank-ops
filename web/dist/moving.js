@@ -87,11 +87,13 @@ let tankPos = new Vector(200,100);
 drawPointVec(startPos);
 drawPointVec(endPos);
 
-const MAX_SPEED = 400;
+const MAX_SPEED = 200;
 const dist = endPos.sub(startPos);
 const duration = (dist.x / MAX_SPEED) * 1000;
-const tMove = ((dist.x * 0.5) / (0.5 * MAX_SPEED)) * 1000;
+const tMid = duration / 2; // time to reach mid point
 let startTime = 0;
+console.log("duration:", duration);
+console.log("tMid:", tMid);
 
 function animate(t) {
   ctx.clearRect(0,0,canvas.width,200);
@@ -106,10 +108,27 @@ function animate(t) {
     startTime = t;
   }
   let elapsed = t - startTime;
-  let t1 = elapsed / tMove;
-  let t2 =(elapsed - tMove) / tMove;
-  let p  = elapsed <= tMove ? areaUnderLine(0,1,t1) : areaUnderLine(1,0,t2) + 0.5;
-  tankPos.x = lerp(startPos.x, endPos.x, p);
+  let progress;
+
+  if (elapsed >= duration) {
+    progress = 1; // Force progress to 1 when duration is met
+  } else if (elapsed <= tMid) {
+    // Acceleration phase: linearly increase speed
+    let accelerationProgress = elapsed / tMid;
+    progress = 0.5 * accelerationProgress * accelerationProgress; // quadratic for constant accel
+  } else {
+    // Deceleration phase: linearly decrease speed
+    let decelerationProgress = (elapsed - tMid) / tMid;
+    progress = 0.5 + 0.5 * (2 * decelerationProgress - decelerationProgress * decelerationProgress); // quad decel
+  }
+  let lastx = tankPos.x; 
+  tankPos.x = lerp(startPos.x, endPos.x, progress);
+  let v = tankPos.x - lastx;
+  console.log(v);
+  if (v > 6) {
+    console.log("reached 6:", elapsed);
+  }
+  
   drawPointVec(tankPos)
   requestAnimationFrame(animate);
 } 
